@@ -1,9 +1,9 @@
+name: Docker Image CI
 on: [push]
-
-jobs
-  test:
+jobs:
+  build:
     runs-on: ubuntu-latest
-    name: test flow
+    name: test-flow
     steps:
     - name: Login to ACR
       uses: denverdino/acr-login@v1
