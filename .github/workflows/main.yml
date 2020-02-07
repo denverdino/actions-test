@@ -6,7 +6,7 @@ jobs:
     name: test-flow
     steps:
     - name: Login to ACR
-      uses: denverdino/acr-login@v1
+      uses: denverdino/acr-login@releases/v1
       with:
         login-server: https://registry.cn-hangzhou.aliyuncs.com
         username: "${{ secrets.REGISTRY_USERNAME }}"
