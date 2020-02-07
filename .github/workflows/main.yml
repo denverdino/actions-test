@@ -13,6 +13,7 @@ jobs:
         username: "${{ secrets.REGISTRY_USERNAME }}"
         password: "${{ secrets.REGISTRY_PASSWORD }}"
     - name: Build and push image registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo
+      env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         docker build -t registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:$IMAGE_TAG .
@@ -36,6 +37,7 @@ jobs:
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
         instance-id: "cri-rr502bh5sa8lcmt6"
     - name: Build and push image acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo
+      env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         docker build -t acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo:$IMAGE_TAG .
