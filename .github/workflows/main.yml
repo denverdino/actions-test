@@ -9,8 +9,8 @@ jobs:
       uses: denverdino/acr-login@releases/v1
       with:
         login-server: https://registry.cn-hangzhou.aliyuncs.com
-        access-key-id: "${{ secrets.REGISTRY_USERNAME }}"
-        access-key-secret: "${{ secrets.REGISTRY_PASSWORD }}"
+        username: "${{ secrets.REGISTRY_USERNAME }}"
+        password: "${{ secrets.REGISTRY_PASSWORD }}"
     - name: Login to ACR with temp token
       uses: denverdino/acr-login@releases/v1
       with:
