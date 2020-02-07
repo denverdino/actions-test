@@ -11,5 +11,5 @@ jobs:
         login-server: https://cr.cn-hangzhou.aliyuncs.com
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
-     env:
+      env:
         DEBUG: "*"
