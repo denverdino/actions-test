@@ -5,9 +5,23 @@ jobs:
     runs-on: ubuntu-latest
     name: test-flow
     steps:
-    - name: Login to ACR
+    - name: Login to ACR by uid
       uses: denverdino/acr-login@releases/v1
       with:
-        login-server: https://cr.cn-hangzhou.aliyuncs.com
+        login-server: https://registry.cn-hangzhou.aliyuncs.com
+        access-key-id: "${{ secrets.REGISTRY_USERNAME }}"
+        access-key-secret: "${{ secrets.REGISTRY_PASSWORD }}"
+    - name: Login to ACR with temp token
+      uses: denverdino/acr-login@releases/v1
+      with:
+        region-id: cn-hangzhou
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
+    - name: Login to ACR EE intance with temp token
+      uses: denverdino/acr-login@releases/v1
+      with:
+        login-server: https://acr-ee-registry.cn-hangzhou.cr.aliyuncs.com
+        region-id: cn-hangzhou  
+        access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
+        access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
+        instance-id: "cri-rr502bh5sa8lcmt6"
