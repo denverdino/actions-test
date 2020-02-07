@@ -5,18 +5,28 @@ jobs:
     runs-on: ubuntu-latest
     name: test-flow
     steps:
+    - uses: actions/checkout@master
     - name: Login to ACR by uid
       uses: denverdino/acr-login@releases/v1
       with:
         login-server: https://registry.cn-hangzhou.aliyuncs.com
         username: "${{ secrets.REGISTRY_USERNAME }}"
         password: "${{ secrets.REGISTRY_PASSWORD }}"
+    - name: Build and push image registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:$IMAGE_TAG .
+        docker push registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:$IMAGE_TAG
     - name: Login to ACR with temp token
       uses: denverdino/acr-login@releases/v1
       with:
         region-id: cn-hangzhou
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
+    - name: Build and push image registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo
+      run: |
+        docker build -t registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:test .
+        docker push registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:test
     - name: Login to ACR EE intance with temp token
       uses: denverdino/acr-login@releases/v1
       with:
@@ -25,3 +35,8 @@ jobs:
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
         instance-id: "cri-rr502bh5sa8lcmt6"
+    - name: Build and push image acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo:$IMAGE_TAG .
+        docker push acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo:$IMAGE_TAG
