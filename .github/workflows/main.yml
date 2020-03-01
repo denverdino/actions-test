@@ -7,7 +7,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Login to ACR by uid
-      uses: denverdino/acr-login@releases/v1
+      uses: denverdino/acr-login@v1
       with:
         login-server: https://registry.cn-hangzhou.aliyuncs.com
         username: "${{ secrets.REGISTRY_USERNAME }}"
@@ -19,7 +19,7 @@ jobs:
         docker build -t registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:$IMAGE_TAG .
         docker push registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:$IMAGE_TAG
     - name: Login to ACR with temp token
-      uses: denverdino/acr-login@releases/v1
+      uses: denverdino/acr-login@v1
       with:
         region-id: cn-hangzhou
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
@@ -29,7 +29,7 @@ jobs:
         docker build -t registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:test .
         docker push registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:test
     - name: Login to ACR EE intance with temp token
-      uses: denverdino/acr-login@releases/v1
+      uses: denverdino/acr-login@v1
       with:
         login-server: https://acr-ee-registry.cn-hangzhou.cr.aliyuncs.com
         region-id: cn-hangzhou  
