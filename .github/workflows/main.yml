@@ -42,3 +42,11 @@ jobs:
       run: |
         docker build -t acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo:$IMAGE_TAG .
         docker push acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo:$IMAGE_TAG
+    - name: Scan image
+      uses: denverdino/acr-scan@v0.1.0
+      with:
+        region-id: cn-hangzhou  
+        access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
+        access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
+        repository: "denverdino/nginx-demo"
+        tag: test
