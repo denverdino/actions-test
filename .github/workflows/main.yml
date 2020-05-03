@@ -52,12 +52,10 @@ jobs:
         tag: test
     - name: Scan image in ACR EE
       uses: denverdino/acr-scan@v0.1.0
-      env:
-        IMAGE_TAG: ${{ github.sha }}
       with:
         region-id: cn-hangzhou  
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
         instance-id: "cri-rr502bh5sa8lcmt6"
         repository: "test/nginx-demo"
-        tag: $IMAGE_TAG
+        tag: ${{ github.sha }}
