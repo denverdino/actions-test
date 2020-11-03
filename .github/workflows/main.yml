@@ -4,58 +4,63 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: test-flow
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+      NAMESPACE: docker_image
+      IMAGE: nginx
+      ACR_REGISTRY: registry.cn-hangzhou.aliyuncs.com
+      ACR_EE_REGISTRY: acr-test-registry.cn-hangzhou.cr.aliyuncs.com
+      ACR_EE_INSTANCE_ID: cri-t6jkiz4it910b8c2
+      ACR_EE_NAMESPACE: docker_image
+      REGION_ID: cn-hangzhou
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: Login to ACR by uid
-      uses: denverdino/acr-login@v0.1.0
+      uses: denverdino/acr-login@v0.1.1
       with:
-        login-server: https://registry.cn-hangzhou.aliyuncs.com
+        login-server: "https://${{ env.ACR_REGISTRY }}"
         username: "${{ secrets.REGISTRY_USERNAME }}"
         password: "${{ secrets.REGISTRY_PASSWORD }}"
-    - name: Build and push image registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo
-      env:
-        IMAGE_TAG: ${{ github.sha }}
+    - name: Build and push image with username and password
       run: |
-        docker build -t registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:$IMAGE_TAG .
-        docker push registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:$IMAGE_TAG
+        docker build -t $ACR_REGISTRY/$NAMESPACE/$IMAGE:$IMAGE_TAG .
+        docker push $ACR_REGISTRY/$NAMESPACE/$IMAGE:$IMAGE_TAG
     - name: Login to ACR with temp token
-      uses: denverdino/acr-login@v0.1.0
+      uses: denverdino/acr-login@v0.1.1
       with:
-        region-id: cn-hangzhou
+        region-id: "${{ env.REGION_ID }}"
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
-    - name: Build and push image registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo
+    - name: Build and push image with temp token
       run: |
-        docker build -t registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:test .
-        docker push registry.cn-hangzhou.aliyuncs.com/denverdino/nginx-demo:test
-    - name: Login to ACR EE intance with temp token
-      uses: denverdino/acr-login@v0.1.0
+        docker build -t $ACR_REGISTRY/$NAMESPACE/$IMAGE:test .
+        docker push $ACR_REGISTRY/$NAMESPACE/$IMAGE:test
+    - name: Login to ACR EE instance with temp token
+      uses: denverdino/acr-login@v0.1.1
       with:
-        login-server: https://acr-ee-registry.cn-hangzhou.cr.aliyuncs.com
-        region-id: cn-hangzhou  
+        login-server: "https://${{ env.ACR_EE_REGISTRY }}"
+        region-id: "${{ env.REGION_ID }}"
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
-        instance-id: "cri-rr502bh5sa8lcmt6"
-    - name: Build and push image acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo
-      env:
-        IMAGE_TAG: ${{ github.sha }}
+        instance-id: "${{ env.ACR_EE_INSTANCE_ID }}"
+    - name: Build and push image to ACR EE instance
       run: |
-        docker build -t acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo:$IMAGE_TAG .
-        docker push acr-ee-registry.cn-hangzhou.cr.aliyuncs.com/test/nginx-demo:$IMAGE_TAG
+        docker build -t $ACR_EE_REGISTRY/$ACR_EE_NAMESPACE/$IMAGE:test .
+        docker push $ACR_EE_REGISTRY/$ACR_EE_NAMESPACE/$IMAGE:test
     - name: Scan image in ACR
-      uses: denverdino/acr-scan@v0.1.0
+      uses: denverdino/acr-scan@v0.1.1
       with:
-        region-id: cn-hangzhou  
+        region-id: "${{ env.REGION_ID }}"
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
-        repository: "denverdino/nginx-demo"
+        repository: "${{ env.ACR_EE_NAMESPACE }}/${{ env.IMAGE }}"
         tag: test
     - name: Scan image in ACR EE
-      uses: denverdino/acr-scan@v0.1.0
+      uses: denverdino/acr-scan@v0.1.1
       with:
-        region-id: cn-hangzhou  
+        region-id: "${{ env.REGION_ID }}"
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
-        instance-id: "cri-rr502bh5sa8lcmt6"
-        repository: "test/nginx-demo"
+        instance-id: "${{ env.ACR_EE_INSTANCE_ID }}"
+        repository: "${{ env.ACR_EE_NAMESPACE}}/${{ env.IMAGE }}"
         tag: ${{ github.sha }}
