@@ -63,4 +63,4 @@ jobs:
         access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
         instance-id: "${{ env.ACR_EE_INSTANCE_ID }}"
         repository: "${{ env.ACR_EE_NAMESPACE}}/${{ env.IMAGE }}"
-        tag: ${{ github.sha }}
+        tag: test
