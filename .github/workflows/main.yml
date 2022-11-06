@@ -6,47 +6,17 @@ jobs:
     name: test-flow
     env:
       IMAGE_TAG: ${{ github.sha }}
-      NAMESPACE: docker_image
+      NAMESPACE: denverdino
       IMAGE: nginx
       ACR_REGISTRY: registry.cn-hangzhou.aliyuncs.com
-      ACR_EE_REGISTRY: acr-test-registry.cn-hangzhou.cr.aliyuncs.com
-      ACR_EE_INSTANCE_ID: cri-t6jkiz4it910b8c2
-      ACR_EE_NAMESPACE: docker_image
+      ACR_EE_REGISTRY: knative-dev-registry.cn-hangzhou.cr.aliyuncs.com
+      ACR_EE_INSTANCE_ID: cri-t0c5ol5s4rf6lpje
+      ACR_EE_NAMESPACE: denverdino
       REGION_ID: cn-hangzhou
-      ACK_INSTANCE_ID: cfd2e6218cf2b494f83e7cd0b21b1cba5
     steps:
     - uses: actions/checkout@v2
-    - name: Set K8s context
-      uses: aliyun/ack-set-context@v1
-      with:
-        access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
-        access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
-        cluster-id: "${{ env.ACK_INSTANCE_ID }}"
-    - name: List pod
-      run: |
-        kubectl get pods -A
-    - name: Login to ACR by uid
-      uses: aliyun/acr-login@v1
-      with:
-        login-server: "https://${{ env.ACR_REGISTRY }}"
-        username: "${{ secrets.REGISTRY_USERNAME }}"
-        password: "${{ secrets.REGISTRY_PASSWORD }}"
-    - name: Build and push image with username and password
-      run: |
-        docker build -t $ACR_REGISTRY/$NAMESPACE/$IMAGE:$IMAGE_TAG .
-        docker push $ACR_REGISTRY/$NAMESPACE/$IMAGE:$IMAGE_TAG
-    - name: Login to ACR with temp token
-      uses: aliyun/acr-login@v1
-      with:
-        region-id: "${{ env.REGION_ID }}"
-        access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
-        access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
-    - name: Build and push image with temp token
-      run: |
-        docker build -t $ACR_REGISTRY/$NAMESPACE/$IMAGE:test .
-        docker push $ACR_REGISTRY/$NAMESPACE/$IMAGE:test
     - name: Login to ACR EE instance with temp token
-      uses: aliyun/acr-login@v1
+      uses: aliyun/acr-login@master
       with:
         login-server: "https://${{ env.ACR_EE_REGISTRY }}"
         region-id: "${{ env.REGION_ID }}"
@@ -57,16 +27,8 @@ jobs:
       run: |
         docker build -t $ACR_EE_REGISTRY/$ACR_EE_NAMESPACE/$IMAGE:test .
         docker push $ACR_EE_REGISTRY/$ACR_EE_NAMESPACE/$IMAGE:test
-    - name: Scan image in ACR
-      uses: aliyun/acr-scan@v1
-      with:
-        region-id: "${{ env.REGION_ID }}"
-        access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
-        access-key-secret: "${{ secrets.REGISTRY_ACCESS_KEY_SECRET }}"
-        repository: "${{ env.ACR_EE_NAMESPACE }}/${{ env.IMAGE }}"
-        tag: test
     - name: Scan image in ACR EE
-      uses: aliyun/acr-scan@v1
+      uses: aliyun/acr-scan@master
       with:
         region-id: "${{ env.REGION_ID }}"
         access-key-id: "${{ secrets.REGISTRY_ACCESS_KEY_ID }}"
