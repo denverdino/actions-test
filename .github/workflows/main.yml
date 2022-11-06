@@ -16,7 +16,7 @@ jobs:
       ACR_EE_NAMESPACE: denverdino
       REGION_ID: cn-hangzhou
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Login to ACR EE instance with temp token
       uses: aliyun/acr-login@master
       with:
